@@ -1,11 +1,19 @@
 [phases.setup]
 nixPkgs = [
+  "nodejs",
   "php83",
-  "php83Packages.composer",
-  "php83Extensions.pdo_mysql",
-  "php83Extensions.mysqlnd",
-  "nodejs"
+  "php83Packages.composer"
+]
+
+[phases.build]
+cmds = [
+  "composer install --no-dev --optimize-autoloader"
+]
+
+[phases.runtime]
+nixPkgs = [
+  "php83.withExtensions (ext: with ext; [ pdo_mysql mysqli ])"
 ]
 
 [start]
-cmd = "php artisan serve --host=0.0.0.0 --port=$PORT"
+cmd = "php -S 0.0.0.0:$PORT -t public"
